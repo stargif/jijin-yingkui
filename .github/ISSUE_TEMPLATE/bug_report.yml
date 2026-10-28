@@ -1,0 +1,47 @@
+name: 问题反馈
+description: 数字不对、面板显示异常、打不开等
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请尽量填全。尤其「面板右下角有没有绿点」这一项——它能直接区分是「数据源没刷新」还是「行情没取到」。
+  - type: input
+    id: macos
+    attributes:
+      label: macOS 版本
+      placeholder: 例如 26.6（苹果菜单 → 关于本机）
+    validations:
+      required: true
+  - type: dropdown
+    id: chip
+    attributes:
+      label: 芯片
+      options: [M1, M2, M3, M4, 其他 Apple Silicon, Intel]
+    validations:
+      required: true
+  - type: input
+    id: yjb
+    attributes:
+      label: 养基宝版本
+      placeholder: 例如 2.0.19
+  - type: textarea
+    id: what
+    attributes:
+      label: 现象
+      description: 你看到什么、预期是什么。数字问题请说明是「面板数字」还是「菜单栏数字」。
+    validations:
+      required: true
+  - type: dropdown
+    id: live
+    attributes:
+      label: 面板右下角是否有绿点 +「实时」
+      options: ["有绿点", "没有绿点，显示数据 时间", "没注意"]
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: 截图
+      description: 直接把截图拖进来即可

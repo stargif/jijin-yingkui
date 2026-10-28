@@ -1,0 +1,16 @@
+name: 功能建议
+description: 想要新的字段、交互或显示方式
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: 你想解决什么问题
+      description: 先说场景，再说期望的样子，比直接给方案更好。
+    validations:
+      required: true
+  - type: textarea
+    id: alternative
+    attributes:
+      label: 你试过的替代办法
