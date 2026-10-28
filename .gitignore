@@ -1,0 +1,13 @@
+# 构建产物
+.build/
+*.app/
+dist/
+*.zip
+
+# macOS
+.DS_Store
+__MACOSX/
+
+# 根目录下的临时截图（docs/ 里的要保留）
+/*.png
+/MenuBarPnl*.log
