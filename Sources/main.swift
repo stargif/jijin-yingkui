@@ -846,8 +846,9 @@ final class PanelController {
     }
 
     /// 完整夹进屏幕可见区域
-    private func clampToScreen() {
-        guard let visible = currentScreen?.visibleFrame else { return }
+    private func clampToScreen(preferring preferred: NSScreen? = nil) {
+        let screen = preferred ?? currentScreen
+        guard let visible = screen?.visibleFrame else { return }
         let f = panel.frame
         guard f.width > 1, f.height > 1 else { return }
         let m: CGFloat = 8
@@ -866,7 +867,7 @@ final class PanelController {
             panel.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary]
         } else {
             panel.level = .normal
-            panel.collectionBehavior = [.moveToActiveSpace]
+            panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         }
     }
 
@@ -901,21 +902,50 @@ final class PanelController {
                        y: vis.maxY - panel.frame.height - 12)
     }
 
+    /// 鼠标所在的屏幕——用户点菜单栏时，视线就在这块屏上
+    private var mouseScreen: NSScreen? {
+        let p = NSEvent.mouseLocation
+        return NSScreen.screens.first { $0.frame.contains(p) }
+    }
+
     func show(relativeTo button: NSStatusBarButton?) {
         model.refresh()
         resizeToFit()
 
-        if let saved = savedOrigin(), isReachable(saved) {
+        let target = mouseScreen ?? NSScreen.main
+        let visible = target?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
+
+        // 记住的位置只在这块屏幕上才复用，否则回到右上角，避免"弹到另一块屏"
+        if let saved = savedOrigin(),
+           let savedScreen = NSScreen.screens.first(where: { $0.frame.contains(saved) }),
+           savedScreen == target {
             panel.setFrameOrigin(saved)
         } else {
-            panel.setFrameOrigin(defaultOrigin)
+            panel.setFrameOrigin(NSPoint(x: visible.maxX - panel.frame.width - 16,
+                                         y: visible.maxY - panel.frame.height - 12))
         }
-        DebugLog.write("show origin=\(panel.frame.origin) saved=\(savedOrigin().map { "\($0)" } ?? "无")")
-        clampToScreen()
+
+        // 任何空间都显示，避免落在非活动空间里"看不见"
+        panel.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary]
+        clampToScreen(preferring: target)
+        DebugLog.write("show target=\(target?.localizedName ?? "?") origin=\(panel.frame.origin)")
 
         panel.orderFrontRegardless()
         panel.makeKey()
         resizeToFit()
+    }
+
+    /// 点击时：当前屏可见才收起，否则重新定位弹出（避免"点了没反应"）
+    func toggle(relativeTo button: NSStatusBarButton?) {
+        guard panel.isVisible else {
+            show(relativeTo: button)
+            return
+        }
+        if let target = mouseScreen, target.frame.intersects(panel.frame) {
+            hide()
+        } else {
+            show(relativeTo: button)
+        }
     }
 
     /// 这个坐标是否落在某块屏幕的可见区域内
@@ -928,9 +958,6 @@ final class PanelController {
         panel.orderOut(nil)
     }
 
-    func toggle(relativeTo button: NSStatusBarButton?) {
-        panel.isVisible ? hide() : show(relativeTo: button)
-    }
 }
 
 // MARK: - App
