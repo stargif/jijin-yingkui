@@ -94,6 +94,40 @@ touch /tmp/fundbar-debug     # 或 FUNDBAR_DEBUG=1
 tail -f /tmp/fundbar.log
 ```
 
+## 常见问题
+
+### git 连不上 github.com（push/pull 卡住）
+
+**现象**：`git push` / `git pull` 一直挂着不动，但浏览器能正常打开 GitHub，`gh api` 也能用。
+
+**原因**：`git` 不读取 macOS 的系统代理设置，它会直连 GitHub。某些网络环境下 `github.com` 的 IP 被单独拦截，而 `api.github.com` 正常，于是出现「`gh` 能用、`git` 不能用」的怪现象。
+
+**解决**：让 git 单独走代理（端口以你实际代理软件为准）：
+
+```bash
+# 只对 github.com 生效，不影响其它站点
+git config --global http.https://github.com/.proxy http://127.0.0.1:7897
+```
+
+验证：
+
+```bash
+git ls-remote https://github.com/<user>/<repo>.git
+```
+
+能列出分支即成功。要取消：
+
+```bash
+git config --global --unset http.https://github.com/.proxy
+```
+
+### 面板数字不跳动
+
+看面板右下角有没有绿点和「实时」：
+
+- **有绿点** → 行情是通的，数字不跳是因为收盘了（A 股 15:00 后指数不再变化）
+- **没有绿点，显示「数据 时间」** → 指数行情没取到；若长期如此，检查网络能否访问 `push2.eastmoney.com`
+
 ## 免责声明
 
 本项目为非官方个人工具，与「养基宝」及其开发方无任何关联，也未获得其授权或认可。程序仅读取本机已登录客户端自己产生的本地数据文件，不进行网络抓包、不绕过任何鉴权、不修改数据源 App 的任何内容。数据仅供参考，不构成投资建议，盈亏以官方客户端为准。
