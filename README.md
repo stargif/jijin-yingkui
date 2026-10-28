@@ -1,4 +1,6 @@
-# FundBar · 基金盈亏菜单栏
+# 基金盈亏 · macOS 菜单栏悬浮面板
+
+> 英文代号 FundBar，仓库名 `jijin-yingkui`。
 
 在 macOS 菜单栏常驻显示「今日盈亏」，点开是一个半透明浮窗，逐只列出持有基金、当日收益、关联板块和本月收益。
 
@@ -33,15 +35,15 @@
 
 ### 方式一：下载安装包
 
-1. 解压 `FundBar-mac.zip`
+1. 解压 `基金盈亏-mac.zip`
 2. 双击 `安装.command`（首次会被 Gatekeeper 拦截：右键 → 打开）
 3. 脚本会装到 `~/Applications`、解除隔离标记并启动
 
 ### 方式二：自己编译
 
 ```bash
-git clone <this-repo>
-cd FundBar
+git clone https://github.com/stargif/jijin-yingkui.git
+cd jijin-yingkui
 ./build.sh          # 产出 基金盈亏.app
 open 基金盈亏.app
 ```
