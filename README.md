@@ -35,7 +35,7 @@
 
 ### 方式一：下载安装包
 
-1. 解压 `基金盈亏-mac.zip`
+1. 解压 `FundBar-mac.zip`
 2. 双击 `安装.command`（首次会被 Gatekeeper 拦截：右键 → 打开）
 3. 脚本会装到 `~/Applications`、解除隔离标记并启动
 
